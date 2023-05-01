@@ -1,11 +1,11 @@
-#echo off
+echo off
 
 SET DB_USER=postgres
 SET DB_PASSWORD=password
 SET DB_NAME=newsletter
 SET DB_PORT=5432
 SET DB_HOST=localhost
-SET SKIP_DOCKER=%1
+SET SKIP_DOCKER=.%1
 
 sqlx -V
 

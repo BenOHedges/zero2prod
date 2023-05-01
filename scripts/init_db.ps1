@@ -17,17 +17,17 @@ if (-not (Get-Command psql -ErrorAction SilentlyContinue)) {
 
 if ($SKIP_DOCKER -eq "false") {
     docker run `
-    -e POSTGRES_USER=$DB_USER `
-    -e POSTGRES_PASSWORD=$DB_PASSWORD `
-    -e POSTGRES_DB=$DB_NAME `
-    -p $DB_PORT:5432 `
+    -e POSTGRES_USER=${DB_USER} `
+    -e POSTGRES_PASSWORD=${DB_PASSWORD} `
+    -e POSTGRES_DB=${DB_NAME} `
+    -p ${DB_PORT}:5432 `
     -d postgres `
     postgres -N 1000
 }
 
-Write-Host "postgres is up and running on port $DB_PORT, running migrations now"
+Write-Host "postgres SHOULD be up and running on port $DB_PORT, attempting to run migrations now"
 
-$env:DATABASE_URL = "postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
+$env:DATABASE_URL = "postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}"
 sqlx database create
 sqlx migrate run
 
