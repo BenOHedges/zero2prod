@@ -1,6 +1,6 @@
+use sqlx::{Connection, PgConnection};
 use std::net::TcpListener;
 use zero2prod::configuration::get_configuration;
-use sqlx::{PgConnection, Connection};
 
 fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
@@ -13,7 +13,7 @@ fn spawn_app() -> String {
 }
 
 #[tokio::test]
-async fn health_check_works(){
+async fn health_check_works() {
     //Arrange
     let address = spawn_app();
     let client = reqwest::Client::new();
@@ -30,7 +30,7 @@ async fn health_check_works(){
 }
 
 #[tokio::test]
-async fn subscriber_returns_200_for_valid_form_data(){
+async fn subscriber_returns_200_for_valid_form_data() {
     //Arrange
     let app_address = spawn_app();
     let configuration = get_configuration().expect("Failed to read configuration");
@@ -54,7 +54,7 @@ async fn subscriber_returns_200_for_valid_form_data(){
 }
 
 #[tokio::test]
-async fn subscriber_returns_400_when_data_is_missing(){
+async fn subscriber_returns_400_when_data_is_missing() {
     //Arrange
     let app_address = spawn_app();
     let client = reqwest::Client::new();
@@ -62,10 +62,10 @@ async fn subscriber_returns_400_when_data_is_missing(){
     let test_cases = vec![
         ("name=john%20smith", "missing the email"),
         ("email=john_smith%40gmail.com", "missing the name"),
-        ("", "missing both name and email")
+        ("", "missing both name and email"),
     ];
 
-    for (invalid_body, error_msg) in test_cases{
+    for (invalid_body, error_msg) in test_cases {
         //Act
         let response = client
             .post(&format!("{}/subscriptions", &app_address))
@@ -75,7 +75,11 @@ async fn subscriber_returns_400_when_data_is_missing(){
             .await
             .expect("Failed to execute request");
 
-        assert_eq!(400, response.status().as_u16(), "The API did not fail with 400 bad request when the payload was: {}", error_msg)
+        assert_eq!(
+            400,
+            response.status().as_u16(),
+            "The API did not fail with 400 bad request when the payload was: {}",
+            error_msg
+        )
     }
-
 }
